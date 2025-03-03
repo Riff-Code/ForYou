@@ -2,8 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Synced Romantic Lyrics</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Responsive Romantic Lyrics</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link
@@ -39,24 +41,31 @@
         transform: translate(-50%, -50%);
         width: 90%;
         max-width: 800px;
+        max-height: 90vh;
         text-align: center;
-        z-index: 2;
+        z-index: 3;
+        pointer-events: none;
+        padding: 20px 0;
       }
 
       .lyric {
         font-family: "Cormorant Garamond", serif;
         font-weight: 600;
-        font-size: 2.8em;
+        font-size: clamp(1.8rem, 5vw, 2.8em);
         color: #ffffff;
         position: absolute;
-        width: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 95%;
         opacity: 0;
         text-shadow: 0 0 15px rgba(255, 105, 180, 0.8),
           0 0 25px rgba(255, 105, 180, 0.6), 0 0 35px rgba(255, 105, 180, 0.4);
-        pointer-events: none;
-        line-height: 1.4;
-        letter-spacing: 1px;
+        line-height: 1.3;
+        letter-spacing: 0.5px;
         will-change: opacity;
+        padding: 10px;
+        transition: opacity 0.5s ease;
+        word-wrap: break-word;
       }
 
       .lyric.active {
@@ -66,10 +75,11 @@
 
       .floating-element {
         position: absolute;
-        font-size: 28px;
+        font-size: clamp(18px, 3vw, 28px);
         filter: drop-shadow(0 0 8px #ff69b4);
         opacity: 0.8;
-        z-index: 3;
+        z-index: 2;
+        pointer-events: none;
       }
 
       #music-player {
@@ -86,19 +96,99 @@
             0 0 30px rgba(255, 105, 180, 0.8), 0 0 40px rgba(255, 105, 180, 0.6);
         }
       }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .lyric {
+          line-height: 1.2;
+          padding: 8px;
+        }
+
+        .lyrics-container {
+          max-height: 85vh;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .lyric {
+          font-size: clamp(1.5rem, 6vw, 2rem);
+          line-height: 1.1;
+        }
+
+        .floating-element {
+          font-size: 16px;
+        }
+      }
+
+      @media (orientation: landscape) and (max-height: 500px) {
+        .lyric {
+          font-size: 1.5rem;
+          line-height: 1.1;
+        }
+
+        .lyrics-container {
+          max-height: 80vh;
+        }
+      }
     </style>
   </head>
   <body>
     <div id="music-player">
       <audio id="background-music" autoplay loop>
-        <source src="layla1.mp3" type="audio/mpeg" />
+        <source src="v3.mp3" type="audio/mpeg" />
       </audio>
     </div>
     <div id="particles-js"></div>
     <div class="lyrics-container" id="lyrics-container"></div>
 
     <script>
-      // Konfigurasi lirik dengan waktu dan durasi transisi custom
+      // Konfigurasi Responsif Partikel
+      const getParticleConfig = () => ({
+        particles: {
+          number: {
+            value: window.innerWidth < 768 ? 50 : 100,
+          },
+          color: { value: "#ff85c0" },
+          shape: { type: "circle" },
+          opacity: {
+            value: 0.5,
+            random: true,
+          },
+          size: {
+            value: window.innerWidth < 768 ? 2 : 2.5,
+            random: true,
+          },
+          move: {
+            enable: true,
+            speed: window.innerWidth < 768 ? 1 : 1.5,
+            direction: "none",
+            random: true,
+            straight: false,
+            out_mode: "out",
+            bounce: false,
+            smooth: true,
+          },
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: {
+              enable: true,
+              mode: "repulse",
+              distance: window.innerWidth < 768 ? 80 : 120,
+            },
+            resize: true,
+          },
+          modes: {
+            repulse: {
+              distance: window.innerWidth < 768 ? 50 : 80,
+              duration: 0.6,
+            },
+          },
+        },
+      });
+
+      // Konfigurasi Lirik
       const lyricsConfig = [
         {
           text: "For You❤️",
@@ -112,7 +202,7 @@
           fadeIn: 1,
           fadeOut: 1,
         },
-        { text: "Du-dudu-dudu-dudu", start: 21, fadeIn: 0.5, fadeOut: 0.5 },
+        { text: "Du-dudu-dudu-dudu", start: 21.5, fadeIn: 0.5, fadeOut: 0.5 },
         {
           text: "Waktu berhenti khayal menari-nari",
           start: 25,
@@ -153,166 +243,69 @@
         },
         {
           text: "Bukan kar'na make up di wajahmu",
-          start: 86,
+          start: 73,
           fadeIn: 1,
           fadeOut: 1,
         },
         {
           text: "Atau lipstik merah itu (di bibirmu)",
-          start: 91.5,
+          start: 77,
           fadeIn: 1,
           fadeOut: 1,
         },
-        { text: "Lembut hati tutur kata", start: 95.5, fadeIn: 1, fadeOut: 1 },
+        { text: "Lembut hati tutur kata", start: 81.5, fadeIn: 1, fadeOut: 1 },
         {
           text: "Terciptalah cinta yang kupuja",
-          start: 99,
+          start: 85,
           fadeIn: 1,
           fadeOut: 1,
         },
         {
           text: "Tak peduli langit menertawakanku",
-          start: 104,
+          start: 90,
           fadeIn: 1,
           fadeOut: 1,
         },
         {
           text: "Kau mencuri hatiku, mimipiku, semua rinduku",
-          start: 113,
+          start: 98,
           fadeIn: 1.2,
           fadeOut: 1.2,
         },
-        { text: "Kar'na kamu cantik", start: 121.5, fadeIn: 0.8, fadeOut: 0.8 },
+        { text: "Kar'na kamu cantik", start: 108.5, fadeIn: 0.8, fadeOut: 0.8 },
         {
           text: "'Kan kuberi s'galanya apa yang kupunya",
-          start: 125.5,
+          start: 112.5,
           fadeIn: 1,
           fadeOut: 1,
         },
-        { text: "Dan hatimu baik", start: 130, fadeIn: 0.7, fadeOut: 0.7 },
+        { text: "Dan hatimu baik", start: 117, fadeIn: 0.7, fadeOut: 0.7 },
         {
           text: "Sempurnalah duniaku saat kau di sisiku",
-          start: 134,
+          start: 120.5,
           fadeIn: 1.5,
           fadeOut: 1.5,
         },
-        { text: "Kar'na kamu cantik", start: 155, fadeIn: 0.8, fadeOut: 0.8 },
-        {
-          text: "'Kan kuberi s'galanya apa yang kupunya",
-          start: 160,
-          fadeIn: 1,
-          fadeOut: 1,
-        },
-        { text: "Dan hatimu baik", start: 165, fadeIn: 0.7, fadeOut: 0.7 },
-        {
-          text: "Sempurnalah duniaku saat kau di sisiku",
-          start: 170,
-          fadeIn: 2,
-          fadeOut: 2,
-        },
-        // ... tambahkan konfigurasi untuk semua lirik
-        // Format: { text: "lirik", start: waktu_detik, fadeIn: durasi, fadeOut: durasi }
       ];
 
-      // Inisialisasi partikel
-      particlesJS("particles-js", {
-        particles: {
-          number: { value: 100 },
-          color: { value: "#ff85c0" },
-          shape: { type: "circle" },
-          opacity: { value: 0.5, random: true },
-          size: { value: 2.5, random: true },
-          move: {
-            enable: true,
-            speed: 1.5,
-            direction: "none",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false,
-            smooth: true,
-          },
-        },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "repulse", distance: 120 },
-            resize: true,
-          },
-          modes: { repulse: { distance: 80, duration: 0.6 } },
-        },
-      });
-
-      // Generate lirik
-      const lyricsContainer = document.getElementById("lyrics-container");
-      lyricsConfig.forEach((lyric, index) => {
-        const div = document.createElement("div");
-        div.className = `lyric${index === 0 ? " active" : ""}`;
-        div.textContent = lyric.text;
-        lyricsContainer.appendChild(div);
-      });
-
-      // Sistem kontrol audio dan lirik
-      const audio = document.getElementById("background-music");
-      const lyrics = document.querySelectorAll(".lyric");
+      // Sistem Utama
+      let floatingElements = [];
       let currentLyric = -1;
+      const audio = document.getElementById("background-music");
+      const lyricsContainer = document.getElementById("lyrics-container");
 
-      // Autoplay handler
-      const playAudio = () => {
-        audio.play().catch((error) => {
-          document.body.addEventListener("click", playAudio, { once: true });
-        });
-      };
+      const initParticles = () =>
+        particlesJS("particles-js", getParticleConfig());
 
-      // Mulai musik saat halaman dimuat
-      window.addEventListener("DOMContentLoaded", playAudio);
-      document.addEventListener("click", playAudio, { once: true });
+      const createFloatingElements = () => {
+        // Hapus element sebelumnya
+        floatingElements.forEach((el) => el.remove());
+        floatingElements = [];
 
-      // Update lirik sesuai waktu musik
-      audio.addEventListener("timeupdate", () => {
-        const currentTime = audio.currentTime;
-
-        // Cari lirik yang sesuai
-        const newLyricIndex = lyricsConfig.findIndex(
-          (lyric, index) =>
-            currentTime >= lyric.start &&
-            (index === lyricsConfig.length - 1 ||
-              currentTime < lyricsConfig[index + 1].start)
-        );
-
-        if (newLyricIndex !== -1 && newLyricIndex !== currentLyric) {
-          updateLyric(newLyricIndex);
-        }
-      });
-
-      function updateLyric(newIndex) {
-        if (currentLyric >= 0) {
-          // Fade out lirik sebelumnya
-          gsap.to(lyrics[currentLyric], {
-            opacity: 0,
-            duration: lyricsConfig[currentLyric].fadeOut,
-            ease: "power2.out",
-          });
-        }
-
-        currentLyric = newIndex;
-
-        // Fade in lirik baru
-        gsap.fromTo(
-          lyrics[currentLyric],
-          { opacity: 0 },
-          {
-            opacity: 1,
-            duration: lyricsConfig[currentLyric].fadeIn,
-            ease: "power2.in",
-          }
-        );
-      }
-
-      // Floating elements
-      function createFloatingElements() {
         const elements = ["🌸", "💮", "🌺", "🌷", "💖", "✨"];
-        for (let i = 0; i < 20; i++) {
+        const count = window.innerWidth < 768 ? 15 : 20;
+
+        for (let i = 0; i < count; i++) {
           const element = document.createElement("div");
           element.className = "floating-element";
           element.textContent =
@@ -335,10 +328,79 @@
           });
 
           document.body.appendChild(element);
+          floatingElements.push(element);
         }
-      }
+      };
 
+      const generateLyrics = () => {
+        lyricsConfig.forEach((lyric, index) => {
+          const div = document.createElement("div");
+          div.className = `lyric${index === 0 ? " active" : ""}`;
+          div.textContent = lyric.text;
+          lyricsContainer.appendChild(div);
+        });
+      };
+
+      const handleResize = () => {
+        initParticles();
+        createFloatingElements();
+        gsap.set(".lyric", { clearProps: "all" });
+      };
+
+      const updateLyric = (newIndex) => {
+        if (currentLyric >= 0) {
+          gsap.to(lyrics[currentLyric], {
+            opacity: 0,
+            duration: lyricsConfig[currentLyric].fadeOut,
+            ease: "power2.out",
+          });
+        }
+
+        currentLyric = newIndex;
+        gsap.fromTo(
+          lyrics[currentLyric],
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: lyricsConfig[currentLyric].fadeIn,
+            ease: "power2.in",
+          }
+        );
+      };
+
+      // Event Listeners
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(handleResize, 500);
+      });
+
+      audio.addEventListener("timeupdate", () => {
+        const currentTime = audio.currentTime;
+        const newLyricIndex = lyricsConfig.findIndex(
+          (lyric, index) =>
+            currentTime >= lyric.start &&
+            (index === lyricsConfig.length - 1 ||
+              currentTime < lyricsConfig[index + 1].start)
+        );
+
+        if (newLyricIndex !== -1 && newLyricIndex !== currentLyric) {
+          updateLyric(newLyricIndex);
+        }
+      });
+
+      // Inisialisasi
+      initParticles();
+      generateLyrics();
       createFloatingElements();
+      const lyrics = document.querySelectorAll(".lyric");
+
+      // Auto-play handling
+      const playAudio = () =>
+        audio.play().catch(() => {
+          document.body.addEventListener("click", playAudio, { once: true });
+        });
+      window.addEventListener("DOMContentLoaded", playAudio);
+      document.addEventListener("click", playAudio, { once: true });
     </script>
   </body>
 </html>
